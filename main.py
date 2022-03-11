@@ -67,6 +67,9 @@ while True:
         class_id = classes[i][0]
         curr_obj = (id, class_id)
 
+        cx = int(x + w / 2)
+        cy = int(y + h / 2)
+
         # check if object is below checking threshold
         #
         # if it's above checking threshold then: 
@@ -100,8 +103,6 @@ while True:
         elif curr_obj not in buffered_objs:
             buffered_objs.append(curr_obj)
 
-        cx = int(x + w / 2)
-        cy = int(y + h / 2)
 
         label = f"{class_names[class_id]} : {scores[i]}"
         cv2.putText(frame, label, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.8, red, 3)
