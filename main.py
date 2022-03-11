@@ -1,3 +1,5 @@
+#TODO: ADD FUNCTIONS TO MAKE THINGS MORE SELF DESCRIPTIVE
+
 import cv2
 import time
 from tracker import *
@@ -5,7 +7,7 @@ from tracker import *
 screen_w = 0
 screen_h = 0
 
-checking_proportion = 5/8
+checking_proportion = 4/8
 checking_w = int(checking_proportion * screen_w)
 
 # (id, name)
@@ -17,7 +19,9 @@ white = (255, 255, 255)
 black = (0, 0, 0)
 gray = (80, 80, 80)
 green = (0, 255, 0)
+yellow = (0,255,255)
 red = (0, 0, 255)
+box_color = [green, yellow]
 
 same_obj_radius = 80
 print_objects = False
@@ -31,7 +35,7 @@ with open("obj.names") as f:
 #cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 # work with 3 & 5
 cap = cv2.VideoCapture("data/videos/milk3.mp4")
-net = cv2.dnn.readNet("custom-yolov4-tiny-detector_best.weights", "custom-yolov4-tiny-detector.cfg")
+net = cv2.dnn.readNet("custom-yolov4-tiny-detector_best-v2.weights", "custom-yolov4-tiny-detector-v2.cfg")
 
 model = cv2.dnn_DetectionModel(net)
 model.setInputParams(size=(416,416), scale=1/255)
@@ -52,7 +56,7 @@ while True:
         
     # Detection
     start = time.time()
-    classes, scores, boxes = model.detect(frame, 0.1, 0.2)
+    classes, scores, boxes = model.detect(frame, 0.1, 0.3)
     end = time.time()
 
     # Update tracker
@@ -62,8 +66,6 @@ while True:
         x, y, w, h, id = boxes_ids[i]
         class_id = classes[i][0]
         curr_obj = (id, class_id)
-        cx = int(x + w / 2)
-        cy = int(y + h / 2)
 
         # check if object is below checking threshold
         #
@@ -80,22 +82,36 @@ while True:
         # if it isn't then add it to the detected objects list
         # if it is already, do nothing
         if cy > checking_w:
-            if curr_obj in buffered_objs and curr_obj not in detected_objs:
+            if curr_obj in buffered_objs:
+
                 buffered_objs.remove(curr_obj)
-                detected_objs.append(curr_obj)
-                n_milks += 1
+
+                # check if object with same id wasn't detected already
+                duplicate = False
+                for objs in detected_objs:
+                    if objs[0] == curr_obj[0]: 
+                        duplicate = True
+                        break
+                    
+                if not duplicate: 
+                    detected_objs.append(curr_obj)
+                    n_milks += 1
+                
         elif curr_obj not in buffered_objs:
             buffered_objs.append(curr_obj)
 
+        cx = int(x + w / 2)
+        cy = int(y + h / 2)
 
         label = f"{class_names[class_id]} : {scores[i]}"
         cv2.putText(frame, label, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.8, red, 3)
         cv2.circle(frame, (cx, cy), same_obj_radius, green, -1)
         cv2.putText(frame, str(id), (cx, cy), cv2.FONT_HERSHEY_SIMPLEX, 0.8, red, 3)
-        cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 3)
+        cv2.rectangle(frame, (x, y), (x + w, y + h), box_color[class_id], 3)
     
 
     print(f"Milks detected: {n_milks}")
+    print(f"Detected objects: {detected_objs}")
     cv2.line(frame, (0, checking_w), (screen_h, checking_w), white, 5)
 
     # Draw FPS
