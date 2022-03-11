@@ -30,6 +30,7 @@ gif/
 data/images/all/
 data/videos/others/
 old/
+fix/
 
 # PyInstaller
 #  Usually these files are written by a python script from a template

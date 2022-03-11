@@ -1,13 +1,25 @@
 #TODO: ADD FUNCTIONS TO MAKE THINGS MORE SELF DESCRIPTIVE
+#TODO: TRAIN WITH SAME ITENS LINED AND CLOSER (see fixthis1.png)
 
-import cv2
-import time
+import cv2, time
+import pandas as pd
 from tracker import *
+
+# Get structure with all products available
+products_file = "milk-products.csv"
+products = []
+
+try:
+    data = pd.read_csv(products_file)
+    for index, row in data.iterrows():
+        products.append([row["NAME"], float(row["PRICE"].replace(',','.')), 0])
+except:
+    print(f"Products file {products_file} not found")
 
 screen_w = 0
 screen_h = 0
 
-checking_proportion = 4/8
+checking_proportion = 5/8
 checking_w = int(checking_proportion * screen_w)
 
 # (id, name)
@@ -23,10 +35,12 @@ yellow = (0,255,255)
 red = (0, 0, 255)
 box_color = [green, yellow]
 
-same_obj_radius = 80
+same_obj_radius = 40
 print_objects = False
+print_info = True
 
-n_milks = 0
+n_products = 0
+final_price = 0
 
 class_names = []
 with open("obj.names") as f:
@@ -34,7 +48,7 @@ with open("obj.names") as f:
 
 #cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 # work with 3 & 5
-cap = cv2.VideoCapture("data/videos/milk3.mp4")
+cap = cv2.VideoCapture("data/videos/milk_cond1.mp4")
 net = cv2.dnn.readNet("custom-yolov4-tiny-detector_best-v2.weights", "custom-yolov4-tiny-detector-v2.cfg")
 
 model = cv2.dnn_DetectionModel(net)
@@ -56,7 +70,7 @@ while True:
         
     # Detection
     start = time.time()
-    classes, scores, boxes = model.detect(frame, 0.1, 0.3)
+    classes, scores, boxes = model.detect(frame, 0.3, 0.6)
     end = time.time()
 
     # Update tracker
@@ -98,7 +112,9 @@ while True:
                     
                 if not duplicate: 
                     detected_objs.append(curr_obj)
-                    n_milks += 1
+                    final_price = round(final_price + products[curr_obj[1]][1], 2)
+                    products[curr_obj[1]][2] += 1 
+                    n_products += 1
                 
         elif curr_obj not in buffered_objs:
             buffered_objs.append(curr_obj)
@@ -110,9 +126,13 @@ while True:
         cv2.putText(frame, str(id), (cx, cy), cv2.FONT_HERSHEY_SIMPLEX, 0.8, red, 3)
         cv2.rectangle(frame, (x, y), (x + w, y + h), box_color[class_id], 3)
     
+    if print_info:
+        print(f"Products detected: {n_products}")
+        for product in products:
+            print(f"{product[0]}: {product[2]}")
+        print(f"Total price: {final_price}")
+        print("=========================")
 
-    print(f"Milks detected: {n_milks}")
-    print(f"Detected objects: {detected_objs}")
     cv2.line(frame, (0, checking_w), (screen_h, checking_w), white, 5)
 
     # Draw FPS
