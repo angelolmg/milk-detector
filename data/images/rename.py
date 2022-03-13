@@ -1,6 +1,6 @@
 import os, glob, uuid
 
-folder = 'milk_cond'
+folder = 'cond'
 path = os.getcwd() + "\data\images\\" + folder + '\\'
 
 for file in glob.glob(path + '*.jpg'):

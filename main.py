@@ -1,5 +1,4 @@
 #TODO: ADD FUNCTIONS TO MAKE THINGS MORE SELF DESCRIPTIVE
-#TODO: TRAIN WITH SAME ITENS LINED AND CLOSER (see fixthis1.png)
 
 import cv2, time
 import pandas as pd
@@ -35,7 +34,7 @@ yellow = (0,255,255)
 red = (0, 0, 255)
 box_color = [green, yellow]
 
-same_obj_radius = 40
+same_obj_radius = 30
 print_objects = False
 print_info = True
 
@@ -48,8 +47,8 @@ with open("obj.names") as f:
 
 #cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 # work with 3 & 5
-cap = cv2.VideoCapture("data/videos/milk_cond1.mp4")
-net = cv2.dnn.readNet("custom-yolov4-tiny-detector_best-v2.weights", "custom-yolov4-tiny-detector-v2.cfg")
+cap = cv2.VideoCapture("data/videos/milk_cond3.mp4")
+net = cv2.dnn.readNet("custom-yolov4-tiny-detector_best-v3.weights", "custom-yolov4-tiny-detector.cfg")
 
 model = cv2.dnn_DetectionModel(net)
 model.setInputParams(size=(416,416), scale=1/255)
@@ -61,7 +60,7 @@ while True:
     ret, frame = cap.read() 
     if not ret:
         break
-
+    #frame = frame[50:50+500, 50:50+500]
     # Initialize screen proportion variables
     # Initialize checking threshold  
     if screen_w == 0: 
