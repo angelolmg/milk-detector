@@ -34,12 +34,12 @@ yellow = (0,255,255)
 red = (0, 0, 255)
 box_color = [green, yellow]
 
-same_obj_radius = 30
+same_obj_radius = 40
 print_objects = False
 print_info = True
 
 n_products = 0
-final_price = 0
+total_price = 0
 
 class_names = []
 with open("obj.names") as f:
@@ -69,7 +69,7 @@ while True:
         
     # Detection
     start = time.time()
-    classes, scores, boxes = model.detect(frame, 0.3, 0.6)
+    classes, scores, boxes = model.detect(frame, 0.1, 0.3)
     end = time.time()
 
     # Update tracker
@@ -111,7 +111,7 @@ while True:
                     
                 if not duplicate: 
                     detected_objs.append(curr_obj)
-                    final_price = round(final_price + products[curr_obj[1]][1], 2)
+                    total_price = round(total_price + products[curr_obj[1]][1], 2)
                     products[curr_obj[1]][2] += 1 
                     n_products += 1
                 
@@ -129,7 +129,7 @@ while True:
         print(f"Products detected: {n_products}")
         for product in products:
             print(f"{product[0]}: {product[2]}")
-        print(f"Total price: {final_price}")
+        print(f"Total price: {total_price}")
         print("=========================")
 
     cv2.line(frame, (0, checking_w), (screen_h, checking_w), white, 5)

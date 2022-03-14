@@ -7,10 +7,10 @@ class_names = []
 with open("obj.names") as f:
     class_names = [cname.strip() for cname in f.readlines()]
 
-frame = cv2.imread('data/images/cond/cond_0fa04a70-9ffa-11ec-a81a-7085c2c6b3ed.jpg')
+frame = cv2.imread('data/images/cond/cond_a0237575-a2dd-11ec-a523-7085c2c6b3ed.jpg')
 #frame = cv2.imread('fix/test1.png')
-#frame = frame[20:20+400, 20:20+400]
-frame = cv2.resize(frame, (0,0), fx=0.5, fy=0.5) 
+#frame = frame[20:20+500, 20:20+500]
+#frame = cv2.resize(frame, (0,0), fx=2, fy=2) 
 lt = 0.3
 ut = 0.6
 
