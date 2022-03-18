@@ -1,0 +1,6 @@
+v1 - 40 milk imgs
+v2 - 40/40 milk + cond
+v3 - 40/40/40 milk (156) + cond -> second best
+v4 - v3 + mosaics
+v5 - new images (130) -> third best
+v6 - all images (286) milk + cond -> best

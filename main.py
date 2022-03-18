@@ -47,8 +47,8 @@ with open("obj.names") as f:
 
 #cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 # work with 3 & 5
-cap = cv2.VideoCapture("data/videos/milk_cond3.mp4")
-net = cv2.dnn.readNet("custom-yolov4-tiny-detector_best-v3.weights", "custom-yolov4-tiny-detector.cfg")
+cap = cv2.VideoCapture("data2/videos/milk_cond7.mp4")
+net = cv2.dnn.readNet("custom-yolov4-tiny-detector_best-v6.weights", "custom-yolov4-tiny-detector.cfg")
 
 model = cv2.dnn_DetectionModel(net)
 model.setInputParams(size=(416,416), scale=1/255)
@@ -69,9 +69,9 @@ while True:
         
     # Detection
     start = time.time()
-    classes, scores, boxes = model.detect(frame, 0.1, 0.3)
+    classes, scores, boxes = model.detect(frame, 0.3, 0.5)
     end = time.time()
-
+    print(len(scores))
     # Update tracker
     # Draw boxes and labels
     boxes_ids = tracker.update(boxes)
