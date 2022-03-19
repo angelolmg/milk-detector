@@ -6,6 +6,7 @@ from PIL import ImageTk, Image
 from threading import *
 
 from detector import Detector
+from settings import Settings
 
 def select_file():
     filetypes = (
@@ -36,6 +37,10 @@ def threading():
     t1 = Thread(target=update)
     t1.start()
 
+def open_settings():
+    settings = Settings()
+    print(settings.result)
+
 window = tk.Tk()
 det = Detector()
 
@@ -57,18 +62,20 @@ img_frame = tk.Frame(master=window)
 ctrl_frame = tk.Frame(master=window)
 
 text_box = tk.Text(ctrl_frame, width=32, height=28, font=("Helvetica", 8))
-btn_settings = tk.Button(ctrl_frame, text="Settings...")
+btn_settings = tk.Button(ctrl_frame, text="Settings...", command=open_settings)
 btn_load = tk.Button(ctrl_frame, text="Load Video", command=select_file)
 btn_backwards = tk.Button(ctrl_frame, text="<<", width=5)
 btn_play = tk.Button(ctrl_frame, text=">", width=5, command=threading)
+btn_pause = tk.Button(ctrl_frame, text="||", width=5)
 btn_forward = tk.Button(ctrl_frame, text=">>", width=5)
 
-btn_settings.grid(row=0, column=1, pady=(0,3), sticky='we', columnspan=3)
-btn_load.grid(row=1, column=1, pady=(3,3), sticky='we', columnspan=3)
+btn_settings.grid(row=0, column=1, pady=(0,3), sticky='we', columnspan=4)
+btn_load.grid(row=1, column=1, pady=(3,3), sticky='we', columnspan=4)
 btn_backwards.grid(row=2, column=1, pady=(6,6))
 btn_play.grid(row=2, column=2)
-btn_forward.grid(row=2, column=3)
-text_box.grid(row=3, column=1, pady=(3,0), columnspan=3)
+btn_pause.grid(row=2, column=3)
+btn_forward.grid(row=2, column=4)
+text_box.grid(row=3, column=1, pady=(3,0), columnspan=4)
 
 placeholder = Image.open("data/images/cond/cond_a0237575-a2dd-11ec-a523-7085c2c6b3ed.jpg")
 placeholder = placeholder.resize((870, 500), Image.ANTIALIAS)

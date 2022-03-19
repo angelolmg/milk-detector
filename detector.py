@@ -1,7 +1,6 @@
 #TODO: ADD FUNCTIONS TO MAKE THINGS MORE SELF DESCRIPTIVE
 
 import cv2, time
-from cv2 import CV_32F
 import pandas as pd
 from tracker import *
 
@@ -23,7 +22,7 @@ class Detector:
         self.screen_h = 0
 
         self.checking_proportion = 5/8
-        checking_w = int(self.checking_proportion * self.screen_w)
+        self.checking_w = int(self.checking_proportion * self.screen_w)
 
         # (id, name)
         self.buffered_objs = []
@@ -32,14 +31,14 @@ class Detector:
         # Basic colors
         self.white = (255, 255, 255)
         self.black = (0, 0, 0)
-        gray = (80, 80, 80)
+        self.gray = (80, 80, 80)
         self.green = (0, 255, 0)
-        yellow = (0,255,255)
+        self.yellow = (0,255,255)
         self.red = (0, 0, 255)
-        self.box_color = [self.green, yellow]
+        self.box_color = [self.green, self.yellow]
 
         self.same_obj_radius = 40
-        print_objects = False
+        self.print_objects = False
         self.print_info = False
 
         self.n_products = 0
@@ -57,7 +56,7 @@ class Detector:
         self.model = cv2.dnn_DetectionModel(net)
         self.model.setInputParams(size=(416,416), scale=1/255)
 
-        self.tracker = EuclideanDistTracker(self.same_obj_radius, print_objects)
+        self.tracker = EuclideanDistTracker(self.same_obj_radius, self.print_objects)
 
     def getNextFrame(self):
 
