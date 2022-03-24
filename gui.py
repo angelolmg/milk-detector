@@ -8,6 +8,8 @@ from threading import *
 from detector import Detector
 from settings import Settings
 
+configs = None
+
 def select_file():
     filetypes = (
         ('Video Files', '.mp4 .wmv .mov'),
@@ -38,8 +40,10 @@ def threading():
     t1.start()
 
 def open_settings():
-    settings = Settings()
-    print(settings.result)
+    global configs
+    settings = Settings(configs)
+    configs = settings.result
+    print(configs)
 
 window = tk.Tk()
 det = Detector()
@@ -48,7 +52,7 @@ window.title("MILK Detector")
 window.resizable(width=False, height=False)  
 
 # Get structure with all products available
-products_file = "milk-products.csv"
+products_file = "old/milk-products.csv"
 products = []
 
 try:
@@ -56,7 +60,9 @@ try:
     for index, row in data.iterrows():
         products.append([row["NAME"], float(row["PRICE"].replace(',','.')), 0])
 except:
-    print(f"Products file {products_file} not found")
+    print(f"Products file {products_file} not found.")
+
+
 
 img_frame = tk.Frame(master=window)
 ctrl_frame = tk.Frame(master=window)

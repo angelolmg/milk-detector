@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import DoubleVar, IntVar, filedialog as fd
-from tkinter.messagebox import showinfo
+from tkinter.messagebox import showinfo, showerror
 
 backdrop_color = '#CACACA'
 background_color = '#D4D4D4'
@@ -39,7 +39,7 @@ def select_file(entry, selected_file):
 
 
 class Settings:
-    def __init__(self):
+    def __init__(self, configs):
 
         # WINDOW CONFIGS ==================================
         # =================================================
@@ -54,16 +54,17 @@ class Settings:
         self.choice1 = "OK"
         self.choice2 = "DEFAULT"
         self.choice3 = "CANCEL"
-        self.sliderv1 = DoubleVar(value=0.3)
-        self.sliderv2 = DoubleVar(value=0.5)
-        self.sliderv3 = DoubleVar(value=5/8)
-        self.sliderv4 = IntVar(value=40)
-        self.checkv1 = IntVar(value=0)
-        self.checkv2 = IntVar(value=1)
-        self.checkv3 = IntVar(value=1)
-        self.checkv4 = IntVar(value=1)
-        self.checkv5 = IntVar(value=1)
-        self.checkv6 = IntVar(value=0)
+
+        self.sliderv1 = DoubleVar()
+        self.sliderv2 = DoubleVar()
+        self.sliderv3 = DoubleVar()
+        self.sliderv4 = IntVar()
+        self.checkv1 = IntVar()
+        self.checkv2 = IntVar()
+        self.checkv3 = IntVar()
+        self.checkv4 = IntVar()
+        self.checkv5 = IntVar()
+        self.checkv6 = IntVar()
 
         # MODEL SETTINGS ==================================
         # =================================================
@@ -224,13 +225,19 @@ class Settings:
         self.cancel_btn = tk.Button(self.top, text="Cancel", command=self.on_press_CANCEL)
         self.cancel_btn.grid(row=7, column=4, sticky='we', pady=(5,10), padx=(0,10))
 
-        self.set_DEFAULTS()
+        if configs == None:
+            print('configs is none. setting defaults.')
+            self.set_DEFAULTS()
+        else: 
+            print(configs)
+            print('configs is NOT none. setting defaults.')
+            self.set_configs(configs)
+
         # don't return to main part untill you close
         self.top.wait_window()
 
     def on_press_OK(self):
-        self.result =  [
-                        self.entry1.get(),
+        self.result =  [self.entry1.get(),
                         self.entry2.get(),
                         self.entry3.get(),
                         self.entry4.get(),
@@ -243,6 +250,7 @@ class Settings:
                         self.checkv3.get(),
                         self.checkv4.get(),
                         self.checkv5.get()]
+                        
 
         self.top.destroy()
 
@@ -252,32 +260,58 @@ class Settings:
 
     def set_DEFAULTS(self):
 
-        lines = []
-        with open('defaults/configs.txt') as f:
-            lines = f.readlines()
+        try:
+            lines = []
+            with open('defaults/configs.txt') as f:
+                lines = f.readlines()
+        except:
+            showerror(title='Configuration Error', message="The file 'defaults/configs.txt' is missing.")
+            return
 
+        configs =  [lines[0].split('=')[1].rstrip(),
+                    lines[1].split('=')[1].rstrip(),
+                    lines[2].split('=')[1].rstrip(),
+                    lines[3].split('=')[1].rstrip(),
+                    lines[4].split('=')[1].rstrip(),
+                    lines[5].split('=')[1].rstrip(),
+                    lines[6].split('=')[1].rstrip(),
+                    lines[7].split('=')[1].rstrip(),
+                    lines[8].split('=')[1].rstrip(),
+                    lines[9].split('=')[1].rstrip(),
+                    lines[10].split('=')[1].rstrip(),
+                    lines[11].split('=')[1].rstrip(),
+                    lines[12].split('=')[1].rstrip()
+                    ]
+        
+        self.set_configs(configs)
 
-        set_text(self.entry1, lines[0].split('=')[1].rstrip())
-        set_text(self.entry2, lines[1].split('=')[1].rstrip())
-        set_text(self.entry3, lines[2].split('=')[1].rstrip())
-        set_text(self.entry4, lines[3].split('=')[1].rstrip())
+    def set_configs(self, configs):
 
-        self.sliderv1.set(float(lines[4].split('=')[1].rstrip()))
-        self.sliderv2.set(float(lines[5].split('=')[1].rstrip()))
-        self.sliderv3.set(float(lines[6].split('=')[1].rstrip()))
-        self.sliderv4.set(int(lines[7].split('=')[1].rstrip()))
-        self.checkv1.set(int(lines[8].split('=')[1].rstrip()))
-        self.checkv2.set(int(lines[9].split('=')[1].rstrip()))
-        self.checkv3.set(int(lines[10].split('=')[1].rstrip()))
-        self.checkv4.set(int(lines[11].split('=')[1].rstrip()))
-        self.checkv5.set(int(lines[12].split('=')[1].rstrip()))
+        try:
+            set_text(self.entry1, configs[0])
+            set_text(self.entry2, configs[1])
+            set_text(self.entry3, configs[2])
+            set_text(self.entry4, configs[3])
 
+            self.sliderv1.set(configs[4])
+            self.sliderv2.set(configs[5])
+            self.sliderv3.set(configs[6])
+            self.sliderv4.set(configs[7])
+            self.checkv1.set(configs[8])
+            self.checkv2.set(configs[9])
+            self.checkv3.set(configs[10])
+            self.checkv4.set(configs[11])
+            self.checkv5.set(configs[12])
+
+        except:
+            self.set_DEFAULTS()
+            showerror(title='Configuration Error', message="Something wrong with settings. Setting defaults...")
 
     def test(self):
         print('test')
 
 def open_settings():
-    settings = Settings()
+    settings = Settings(None)
     print(settings.result)
 
-open_settings()
+#open_settings()

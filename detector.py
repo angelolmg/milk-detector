@@ -8,7 +8,7 @@ class Detector:
     def __init__(self):
 
         # Get structure with all products available
-        products_file = "milk-products.csv"
+        products_file = "old/milk-products.csv"
         self.products = []
 
         try:
@@ -45,13 +45,13 @@ class Detector:
         self.total_price = 0
 
         self.class_names = []
-        with open("obj.names") as f:
+        with open("old/obj.names") as f:
             self.class_names = [cname.strip() for cname in f.readlines()]
 
         #cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
         # work with 3 & 5
         self.cap = cv2.VideoCapture("data2/videos/milk_cond7.mp4")
-        net = cv2.dnn.readNet("custom-yolov4-tiny-detector_best-v6.weights", "custom-yolov4-tiny-detector.cfg")
+        net = cv2.dnn.readNet("old/custom-yolov4-tiny-detector_best-v6.weights", "old/custom-yolov4-tiny-detector.cfg")
 
         self.model = cv2.dnn_DetectionModel(net)
         self.model.setInputParams(size=(416,416), scale=1/255)
