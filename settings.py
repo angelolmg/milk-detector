@@ -1,22 +1,71 @@
 import tkinter as tk
+from tkinter import DoubleVar, IntVar, filedialog as fd
+from tkinter.messagebox import showinfo
 
 backdrop_color = '#CACACA'
 background_color = '#D4D4D4'
 border_color = "#C0C0C0"
 
+def set_text(entry, text):
+    entry.config(state='normal')
+
+    entry.delete(0, tk.END)
+    entry.insert(0, text)
+    #entry.focus()
+    #position = entry.index(tk.INSERT)
+    #entry.icursor(position)
+
+    entry.config(state='disabled')
+
+def select_file(entry, selected_file):
+
+    if selected_file == 'cfg':
+        filetype = ('.cfg File', '.cfg')
+    elif selected_file == 'weights':
+        filetype = ('.weights File', '.weights')
+    elif selected_file == 'names':
+        filetype = ('.names File', '.names')
+    elif selected_file == 'csv':
+        filetype = ('products .csv file', '.csv')
+    else:
+        filetype = ('All files', '*.*')
+
+    filename = fd.askopenfilename(
+        title='Open a file',
+        filetypes=[filetype])
+
+    set_text(entry, filename)
+    #showinfo(title='Selected File', message=filename)
+
+
 class Settings:
     def __init__(self):
 
+        # WINDOW CONFIGS ==================================
+        # =================================================
         self.top = tk.Toplevel()
         self.top.title("Settings")
         self.top.configure(background=background_color)
         self.top.resizable(width=False, height=False) 
 
+        # VARIABLES =======================================
+        # =================================================
         self.result = None
-
         self.choice1 = "OK"
         self.choice2 = "DEFAULT"
         self.choice3 = "CANCEL"
+        self.sliderv1 = DoubleVar(value=0.3)
+        self.sliderv2 = DoubleVar(value=0.5)
+        self.sliderv3 = DoubleVar(value=5/8)
+        self.sliderv4 = IntVar(value=40)
+        self.checkv1 = IntVar(value=0)
+        self.checkv2 = IntVar(value=1)
+        self.checkv3 = IntVar(value=1)
+        self.checkv4 = IntVar(value=1)
+        self.checkv5 = IntVar(value=1)
+
+        self.set_DEFAULTS()
+
 
         # MODEL SETTINGS ==================================
         # =================================================
@@ -32,30 +81,30 @@ class Settings:
 
         self.label = tk.Label(self.model_settings, text=".cfg file", background=backdrop_color)
         self.label.grid (row=0, column=0, pady=0, padx=5, sticky = 'e')
-        self.entry = tk.Entry(self.model_settings, text=".cfg file", state='disabled', width=50)
-        self.entry.grid (row=0, column=1, pady=(5,0), padx=0, sticky='we')
-        self.button = tk.Button(self.model_settings, text="Browse", command=self.test, width=10)
+        self.entry1 = tk.Entry(self.model_settings, text=".cfg file", width=50, state='disabled')
+        self.entry1.grid (row=0, column=1, pady=(5,0), padx=0, sticky='we')
+        self.button = tk.Button(self.model_settings, text="Browse", width=10, command= lambda: select_file(self.entry1, 'cfg'))
         self.button.grid(row=0, column=2, pady=(5,0), padx=(10,5))
 
         self.label = tk.Label(self.model_settings, text=".weights file", background=backdrop_color)
         self.label.grid(row=1, column=0, pady=0, padx=5, sticky = 'e')
-        self.entry = tk.Entry(self.model_settings, text=".weights file", state='disabled')
-        self.entry.grid(row=1, column=1, pady=(5,0), padx=0, sticky='we')
-        self.button = tk.Button(self.model_settings, text="Browse", command=self.test)
+        self.entry2 = tk.Entry(self.model_settings, text=".weights file", state='disabled')
+        self.entry2.grid(row=1, column=1, pady=(5,0), padx=0, sticky='we')
+        self.button = tk.Button(self.model_settings, text="Browse", command= lambda: select_file(self.entry2, 'weights'))
         self.button.grid(row=1, column=2, pady=(5,0), padx=(10,5), sticky='we')
 
         self.label = tk.Label(self.model_settings, text=".names file", background=backdrop_color)
         self.label.grid(row=2, column=0, pady=0, padx=5, sticky = 'e')
-        self.entry = tk.Entry(self.model_settings, text=".names file", state='disabled')
-        self.entry.grid(row=2, column=1, pady=(5,0), padx=0, sticky='we')
-        self.button = tk.Button(self.model_settings, text="Browse", command=self.test)
+        self.entry3 = tk.Entry(self.model_settings, text=".names file", state='disabled')
+        self.entry3.grid(row=2, column=1, pady=(5,0), padx=0, sticky='we')
+        self.button = tk.Button(self.model_settings, text="Browse", command= lambda: select_file(self.entry3, 'names'))
         self.button.grid(row=2, column=2, pady=(5,0), padx=(10,5), sticky='we')
 
         self.label = tk.Label(self.model_settings, text="products .csv file", background=backdrop_color)
         self.label.grid(row=3, column=0, pady=0, padx=5, sticky = 'e')
-        self.entry = tk.Entry(self.model_settings, text="products .csv file", state='disabled')
-        self.entry.grid(row=3, column=1, pady=(5,0), padx=0, sticky='we')
-        self.button = tk.Button(self.model_settings, text="Browse", command=self.test)
+        self.entry4 = tk.Entry(self.model_settings, text="products .csv file", state='disabled')
+        self.entry4.grid(row=3, column=1, pady=(5,0), padx=0, sticky='we')
+        self.button = tk.Button(self.model_settings, text="Browse", command= lambda: select_file(self.entry4, 'csv'))
         self.button.grid(row=3, column=2, pady=(5,0), padx=(10,5), sticky='we')
 
 
@@ -68,7 +117,8 @@ class Settings:
                                 resolution=0.05, 
                                 orient='horizontal', 
                                 background=backdrop_color, 
-                                highlightthickness=0)
+                                highlightthickness=0,
+                                variable=self.sliderv1)
         self.slider.grid(row=4, column=1, pady=5, padx=(0,5), sticky='we', columnspan=2)
 
         self.label = tk.Label(self.model_settings, text="Non-maximum\nsuppression Threshold", background=backdrop_color)
@@ -79,11 +129,10 @@ class Settings:
                                 resolution=0.05, 
                                 orient='horizontal', 
                                 background=backdrop_color, 
-                                highlightthickness=0)
+                                highlightthickness=0,
+                                variable=self.sliderv2)
         self.slider.grid(row=5, column=1, pady=5, padx=(0,5), sticky='we', columnspan=2)
 
-
-        # =================================================
 
 
         # TRACKER SETTINGS ==================================
@@ -104,19 +153,20 @@ class Settings:
                                 background=backdrop_color, 
                                 highlightthickness=0,
                                 length=250,
-                                label="Checking proportion")
-        self.slider.grid(row=0, column=0, padx=10, pady=(5,10))
+                                label="Checking proportion",
+                                variable=self.sliderv3)
+        self.slider.grid(row=0, column=0, padx=10, pady=10)
 
         self.slider = tk.Scale(self.tracker_settings, 
-                                from_=10, to=100, 
+                                from_=0, to=80, 
                                 orient='horizontal', 
                                 background=backdrop_color,
                                 highlightthickness=0,
                                 length=250,
-                                label="Same object radius")
-        self.slider.grid(row=1, column=0, padx=10, pady=(0,10))
+                                label="Same object radius",
+                                variable=self.sliderv4)
+        self.slider.grid(row=1, column=0, padx=10, pady=(0,20))
 
-        # =================================================
         
         # DISPLAY SETTINGS ==================================
         # =================================================
@@ -129,27 +179,42 @@ class Settings:
         self.display_settings.grid(row=3, column=2, columnspan=3, sticky='nswe', padx=(5,15))
 
         self.check = tk.Checkbutton(self.display_settings, 
-                                    text='Debug objects',
+                                    text='Debug detected objects',
                                     background=backdrop_color,
-                                    command=self.test)
+                                    command=self.test,
+                                    variable=self.checkv1)
         self.check.grid(row=0, column=0, pady=(0,5), sticky='w')
+        self.check = tk.Checkbutton(self.display_settings, 
+                                    text='Display name and score',
+                                    background=backdrop_color,
+                                    command=self.test,
+                                    variable=self.checkv2)
+        self.check.grid(row=1, column=0, pady=(0,5), sticky='w')
+        self.check = tk.Checkbutton(self.display_settings, 
+                                    text='Display bounding boxes',
+                                    background=backdrop_color,
+                                    command=self.test,
+                                    variable=self.checkv3)
+        self.check.grid(row=2, column=0, pady=(0,5), sticky='w')
+        self.check = tk.Checkbutton(self.display_settings, 
+                                    text='Display tracking info (radius and id)',
+                                    background=backdrop_color,
+                                    command=self.test,
+                                    variable=self.checkv4)
+        self.check.grid(row=3, column=0, pady=(0,5), sticky='w')
         self.check = tk.Checkbutton(self.display_settings, 
                                     text='Display FPS',
                                     background=backdrop_color,
-                                    command=self.test)
-        self.check.grid(row=1, column=0, pady=(0,5), sticky='w')
-        self.check = tk.Checkbutton(self.display_settings, 
-                                    text='Display total price',
-                                    background=backdrop_color,
-                                    command=self.test)
-        self.check.grid(row=2, column=0, pady=(0,5), sticky='w')
+                                    command=self.test,
+                                    variable=self.checkv5)
+        self.check.grid(row=4, column=0, pady=(0,5), sticky='w')
         # =================================================
 
 
         self.ok_btn = tk.Button(self.top, text="OK", command=self.on_press_OK)
         self.ok_btn.grid(row=6, column=0, sticky='we', pady=10, padx=(10, 35))
 
-        self.default_btn = tk.Button(self.top, text="Defaults", command=self.on_press_DEFAULTS)
+        self.default_btn = tk.Button(self.top, text="Defaults", command=self.set_DEFAULTS)
         self.default_btn.grid(row=6, column=1, sticky='we', pady=0, padx=(15, 5))
 
         self.cancel_btn = tk.Button(self.top, text="Cancel", command=self.on_press_CANCEL)
@@ -159,16 +224,43 @@ class Settings:
         self.top.wait_window()
 
     def on_press_OK(self):
-        self.result = self.choice1
-        self.top.destroy()
-
-    def on_press_DEFAULTS(self):
-        self.result = self.choice2
+        self.result =  [
+                        self.entry1.get(),
+                        self.entry2.get(),
+                        self.entry3.get(),
+                        self.entry4.get(),
+                        self.sliderv1.get(),
+                        self.sliderv2.get(),
+                        self.sliderv3.get(),
+                        self.sliderv4.get(),
+                        self.checkv1.get(),
+                        self.checkv2.get(),
+                        self.checkv3.get(),
+                        self.checkv4.get(),
+                        self.checkv5.get()]
         self.top.destroy()
 
     def on_press_CANCEL(self):
         self.result = self.choice3
         self.top.destroy()
+
+    def set_DEFAULTS(self):
+
+        set_text(self.entry1, 'defaults/default.cfg')
+        set_text(self.entry2, 'defaults/default.weights')
+        set_text(self.entry3, 'defaults/default.names')
+        set_text(self.entry4, 'defaults/default.csv')
+
+        self.sliderv1.set(0.3)
+        self.sliderv2.set(0.5)
+        self.sliderv3.set(5/8)
+        self.sliderv4.set(40)
+        self.checkv1.set(0)
+        self.checkv2.set(1)
+        self.checkv3.set(1)
+        self.checkv4.set(1)
+        self.checkv5.set(1)
+
 
     def test(self):
         print('test')
@@ -179,5 +271,5 @@ def open_settings():
     settings = Settings()
     print(settings.result)
 
-#open_settings()
+open_settings()
 

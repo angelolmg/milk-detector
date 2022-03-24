@@ -39,7 +39,7 @@ class Detector:
 
         self.same_obj_radius = 40
         self.print_objects = False
-        self.print_info = False
+        self.print_info = True
 
         self.n_products = 0
         self.total_price = 0

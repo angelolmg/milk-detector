@@ -32,6 +32,7 @@ data/videos/others/
 data2/
 old/
 fix/
+defaults/
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
