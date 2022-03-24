@@ -1,0 +1,13 @@
+config_file_path=defaults/default.cfg
+weights_file_path=defaults/default.weights
+names_file_path=defaults/default.names
+products_csv_file=defaults/default.csv
+confidence_threshold=0.3
+nms_threshold=0.5
+checking_proportion=0.6
+same_object_radius=40
+debug_detected_objects=0
+display_name_score=1
+display_bounding_boxes=1
+display_tracking_info=1
+display_fps=1

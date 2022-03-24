@@ -63,9 +63,7 @@ class Settings:
         self.checkv3 = IntVar(value=1)
         self.checkv4 = IntVar(value=1)
         self.checkv5 = IntVar(value=1)
-
-        self.set_DEFAULTS()
-
+        self.checkv6 = IntVar(value=0)
 
         # MODEL SETTINGS ==================================
         # =================================================
@@ -210,16 +208,23 @@ class Settings:
         self.check.grid(row=4, column=0, pady=(0,5), sticky='w')
         # =================================================
 
+        self.check = tk.Checkbutton(self.top, 
+                                    text='Save settings as default',
+                                    background=background_color,
+                                    command=self.test,
+                                    variable=self.checkv6)
+        self.check.grid(row=6, column=0, pady=(5,0), padx=5, sticky='w', columnspan=2)
 
         self.ok_btn = tk.Button(self.top, text="OK", command=self.on_press_OK)
-        self.ok_btn.grid(row=6, column=0, sticky='we', pady=10, padx=(10, 35))
+        self.ok_btn.grid(row=7, column=0, sticky='we', pady=(5,10), padx=(10, 35))
 
         self.default_btn = tk.Button(self.top, text="Defaults", command=self.set_DEFAULTS)
-        self.default_btn.grid(row=6, column=1, sticky='we', pady=0, padx=(15, 5))
+        self.default_btn.grid(row=7, column=1, sticky='we', pady=(5,10), padx=(15, 5))
 
         self.cancel_btn = tk.Button(self.top, text="Cancel", command=self.on_press_CANCEL)
-        self.cancel_btn.grid(row=6, column=4, sticky='we', pady=0, padx=(0,10))
+        self.cancel_btn.grid(row=7, column=4, sticky='we', pady=(5,10), padx=(0,10))
 
+        self.set_DEFAULTS()
         # don't return to main part untill you close
         self.top.wait_window()
 
@@ -238,6 +243,7 @@ class Settings:
                         self.checkv3.get(),
                         self.checkv4.get(),
                         self.checkv5.get()]
+
         self.top.destroy()
 
     def on_press_CANCEL(self):
@@ -246,30 +252,32 @@ class Settings:
 
     def set_DEFAULTS(self):
 
-        set_text(self.entry1, 'defaults/default.cfg')
-        set_text(self.entry2, 'defaults/default.weights')
-        set_text(self.entry3, 'defaults/default.names')
-        set_text(self.entry4, 'defaults/default.csv')
+        lines = []
+        with open('defaults/configs.txt') as f:
+            lines = f.readlines()
 
-        self.sliderv1.set(0.3)
-        self.sliderv2.set(0.5)
-        self.sliderv3.set(5/8)
-        self.sliderv4.set(40)
-        self.checkv1.set(0)
-        self.checkv2.set(1)
-        self.checkv3.set(1)
-        self.checkv4.set(1)
-        self.checkv5.set(1)
+
+        set_text(self.entry1, lines[0].split('=')[1].rstrip())
+        set_text(self.entry2, lines[1].split('=')[1].rstrip())
+        set_text(self.entry3, lines[2].split('=')[1].rstrip())
+        set_text(self.entry4, lines[3].split('=')[1].rstrip())
+
+        self.sliderv1.set(float(lines[4].split('=')[1].rstrip()))
+        self.sliderv2.set(float(lines[5].split('=')[1].rstrip()))
+        self.sliderv3.set(float(lines[6].split('=')[1].rstrip()))
+        self.sliderv4.set(int(lines[7].split('=')[1].rstrip()))
+        self.checkv1.set(int(lines[8].split('=')[1].rstrip()))
+        self.checkv2.set(int(lines[9].split('=')[1].rstrip()))
+        self.checkv3.set(int(lines[10].split('=')[1].rstrip()))
+        self.checkv4.set(int(lines[11].split('=')[1].rstrip()))
+        self.checkv5.set(int(lines[12].split('=')[1].rstrip()))
 
 
     def test(self):
         print('test')
-
-    
 
 def open_settings():
     settings = Settings()
     print(settings.result)
 
 open_settings()
-

@@ -48,7 +48,7 @@ window.title("MILK Detector")
 window.resizable(width=False, height=False)  
 
 # Get structure with all products available
-products_file = "milk-products1.csv"
+products_file = "milk-products.csv"
 products = []
 
 try:
