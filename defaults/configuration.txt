@@ -1,4 +1,4 @@
-config_file_path=defaults/default.cfg
+cfg_file_path=defaults/default.cfg
 weights_file_path=defaults/default.weights
 names_file_path=defaults/default.names
 products_csv_file=defaults/default.csv

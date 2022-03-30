@@ -1,14 +1,11 @@
 import tkinter as tk
 from tkinter import filedialog as fd
-from tkinter.messagebox import showinfo
-import pandas as pd
+from tkinter.messagebox import showinfo, showerror, showwarning
 from PIL import ImageTk, Image
 from threading import *
 
 from detector import Detector
 from settings import Settings
-
-configs = None
 
 def select_file():
     filetypes = (
@@ -27,9 +24,13 @@ def select_file():
 
 def update():
     while True:
-        nextFrame = Image.fromarray(det.getNextFrame())
-        if nextFrame == None:
+        imgMatrix = det.getNextFrame()
+
+        if isinstance(imgMatrix, type(None)):
+            print('Video ended.')
             break
+
+        nextFrame = Image.fromarray(imgMatrix)
         img = ImageTk.PhotoImage(nextFrame)
         label.configure(image=img)
         label.image = img
@@ -40,29 +41,57 @@ def threading():
     t1.start()
 
 def open_settings():
-    global configs
-    settings = Settings(configs)
-    configs = settings.result
-    print(configs)
+    global configuration
+    settings = Settings(configuration, get_defaults())
 
+    if settings.result: 
+        configuration = settings.result
+    #else: showwarning(title='Configuration Warning', message="No new configuration applied.")
+
+    apply_settings(configuration)
+
+def apply_settings(new_config=None):
+    global det
+    det = Detector(video_path, new_config)
+
+def get_defaults():
+        try:
+            lines = []
+            with open('defaults/configuration.txt') as f:
+                lines = f.readlines()
+        except:
+            showerror(title='Configuration Error', message="The file 'defaults/configuration.txt' is missing.")
+            return None
+
+        configs =  [lines[0].split('=')[1].rstrip(),
+                    lines[1].split('=')[1].rstrip(),
+                    lines[2].split('=')[1].rstrip(),
+                    lines[3].split('=')[1].rstrip(),
+                    float(lines[4].split('=')[1].rstrip()),
+                    float(lines[5].split('=')[1].rstrip()),
+                    float(lines[6].split('=')[1].rstrip()),
+                    int(lines[7].split('=')[1].rstrip()),
+                    bool(lines[8].split('=')[1].rstrip()),
+                    bool(lines[9].split('=')[1].rstrip()),
+                    bool(lines[10].split('=')[1].rstrip()),
+                    bool(lines[11].split('=')[1].rstrip()),
+                    bool(lines[12].split('=')[1].rstrip())
+                    ]
+        
+        return configs
+    
 window = tk.Tk()
-det = Detector()
+video_path = "data2/videos/milk_cond7.mp4"
+configuration = get_defaults()
+det = Detector(video_path, configuration)
 
 window.title("MILK Detector")
 window.resizable(width=False, height=False)  
 
 # Get structure with all products available
-products_file = "old/milk-products.csv"
 products = []
-
-try:
-    data = pd.read_csv(products_file)
-    for index, row in data.iterrows():
-        products.append([row["NAME"], float(row["PRICE"].replace(',','.')), 0])
-except:
-    print(f"Products file {products_file} not found.")
-
-
+if det is not None:
+    products = det.get_products()
 
 img_frame = tk.Frame(master=window)
 ctrl_frame = tk.Frame(master=window)

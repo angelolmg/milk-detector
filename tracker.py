@@ -50,6 +50,10 @@ class EuclideanDistTracker:
         # Update dictionary with IDs not used removed
         self.center_points = new_center_points.copy()
         return objects_bbs_ids
+    
+    def set_distance(self, dst):
+        print("Updating distance on tracker")
+        self.dst = dst
 
 
 

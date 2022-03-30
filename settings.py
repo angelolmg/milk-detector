@@ -39,7 +39,9 @@ def select_file(entry, selected_file):
 
 
 class Settings:
-    def __init__(self, configs):
+    def __init__(self, configs, fallback):
+
+        self.fallback = fallback
 
         # WINDOW CONFIGS ==================================
         # =================================================
@@ -225,12 +227,11 @@ class Settings:
         self.cancel_btn = tk.Button(self.top, text="Cancel", command=self.on_press_CANCEL)
         self.cancel_btn.grid(row=7, column=4, sticky='we', pady=(5,10), padx=(0,10))
 
-        if configs == None:
-            print('configs is none. setting defaults.')
+        if configs is None or len(configs) is not 13:
+            print('Configuration is bad. Setting fallback configutation.')
             self.set_DEFAULTS()
         else: 
-            print(configs)
-            print('configs is NOT none. setting defaults.')
+            print('Configuration is good. Setting configuration.')
             self.set_configs(configs)
 
         # don't return to main part untill you close
@@ -255,35 +256,12 @@ class Settings:
         self.top.destroy()
 
     def on_press_CANCEL(self):
-        self.result = self.choice3
+        self.result = None
         self.top.destroy()
 
+
     def set_DEFAULTS(self):
-
-        try:
-            lines = []
-            with open('defaults/configs.txt') as f:
-                lines = f.readlines()
-        except:
-            showerror(title='Configuration Error', message="The file 'defaults/configs.txt' is missing.")
-            return
-
-        configs =  [lines[0].split('=')[1].rstrip(),
-                    lines[1].split('=')[1].rstrip(),
-                    lines[2].split('=')[1].rstrip(),
-                    lines[3].split('=')[1].rstrip(),
-                    lines[4].split('=')[1].rstrip(),
-                    lines[5].split('=')[1].rstrip(),
-                    lines[6].split('=')[1].rstrip(),
-                    lines[7].split('=')[1].rstrip(),
-                    lines[8].split('=')[1].rstrip(),
-                    lines[9].split('=')[1].rstrip(),
-                    lines[10].split('=')[1].rstrip(),
-                    lines[11].split('=')[1].rstrip(),
-                    lines[12].split('=')[1].rstrip()
-                    ]
-        
-        self.set_configs(configs)
+        self.set_configs(self.fallback)
 
     def set_configs(self, configs):
 
@@ -304,6 +282,11 @@ class Settings:
             self.checkv5.set(configs[12])
 
         except:
+
+            if configs == self.fallback:
+                showerror(title='Configuration Error', message="Fallback configuration is bad. See 'configuration.txt'.")
+                return
+
             self.set_DEFAULTS()
             showerror(title='Configuration Error', message="Something wrong with settings. Setting defaults...")
 
