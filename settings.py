@@ -251,7 +251,25 @@ class Settings:
                         self.checkv3.get(),
                         self.checkv4.get(),
                         self.checkv5.get()]
-                        
+        
+        if self.checkv6.get():
+            f = open("defaults/configuration.txt", "w")
+
+            print('Rewriting defaults file.')
+            f.write(   "cfg_file_path="         + self.entry1.get() + "\n\
+weights_file_path="     + self.entry2.get() + "\n\
+names_file_path="       + self.entry3.get() + "\n\
+products_csv_file="     + self.entry4.get() + "\n\
+confidence_threshold="  + str(self.sliderv1.get()) + "\n\
+nms_threshold="         + str(self.sliderv2.get()) + "\n\
+checking_proportion="   + str(self.sliderv3.get()) + "\n\
+same_object_radius="    + str(self.sliderv4.get()) + "\n\
+debug_detected_objects="+ str(self.checkv1.get()) + "\n\
+display_name_score="    + str(self.checkv2.get()) + "\n\
+display_bounding_boxes="+ str(self.checkv3.get()) + "\n\
+display_tracking_info=" + str(self.checkv4.get()) + "\n\
+display_fps="           + str(self.checkv5.get()) + "\n")
+            f.close()
 
         self.top.destroy()
 
@@ -259,8 +277,8 @@ class Settings:
         self.result = None
         self.top.destroy()
 
-
     def set_DEFAULTS(self):
+        print('Setting defaults -> ' + str(self.fallback))
         self.set_configs(self.fallback)
 
     def set_configs(self, configs):

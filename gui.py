@@ -22,23 +22,30 @@ def select_file():
         message=filename
     )
 
-def update():
+def update(): 
     while True:
-        imgMatrix = det.getNextFrame()
+        if video_playing:
+            imgMatrix = det.getNextFrame()
 
-        if isinstance(imgMatrix, type(None)):
-            print('Video ended.')
-            break
+            if isinstance(imgMatrix, type(None)):
+                global feeds
+                feeds = []
+                print('Video ended.')
+                return
 
-        nextFrame = Image.fromarray(imgMatrix)
-        img = ImageTk.PhotoImage(nextFrame)
-        label.configure(image=img)
-        label.image = img
+            nextFrame = Image.fromarray(imgMatrix)
+            img = ImageTk.PhotoImage(nextFrame)
+            label.configure(image=img)
+            label.image = img
+        else:
+            continue
 
 def threading():
     # Call work function
-    t1 = Thread(target=update)
-    t1.start()
+    global feeds, video_feed
+    video_feed = Thread(target=update)
+    video_feed.start()
+    feeds.append(video_feed)
 
 def open_settings():
     global configuration
@@ -59,6 +66,7 @@ def get_defaults():
             lines = []
             with open('defaults/configuration.txt') as f:
                 lines = f.readlines()
+            print('Getting defaults from file.')
         except:
             showerror(title='Configuration Error', message="The file 'defaults/configuration.txt' is missing.")
             return None
@@ -71,19 +79,38 @@ def get_defaults():
                     float(lines[5].split('=')[1].rstrip()),
                     float(lines[6].split('=')[1].rstrip()),
                     int(lines[7].split('=')[1].rstrip()),
-                    bool(lines[8].split('=')[1].rstrip()),
-                    bool(lines[9].split('=')[1].rstrip()),
-                    bool(lines[10].split('=')[1].rstrip()),
-                    bool(lines[11].split('=')[1].rstrip()),
-                    bool(lines[12].split('=')[1].rstrip())
+                    bool(int(lines[8].split('=')[1].rstrip())),
+                    bool(int(lines[9].split('=')[1].rstrip())),
+                    bool(int(lines[10].split('=')[1].rstrip())),
+                    bool(int(lines[11].split('=')[1].rstrip())),
+                    bool(int(lines[12].split('=')[1].rstrip()))
                     ]
-        
+
         return configs
+
+def play_video():
+    if len(feeds) > 0:
+        global video_playing
+        video_playing = True
+        print('video resume.')
+
+    else:
+        print('video init.')
+        threading()
+
+
+def pause_video():
+    global video_playing
+    video_playing = False
     
 window = tk.Tk()
 video_path = "data2/videos/milk_cond7.mp4"
 configuration = get_defaults()
 det = Detector(video_path, configuration)
+
+video_feed = None
+video_playing = True
+feeds = []
 
 window.title("MILK Detector")
 window.resizable(width=False, height=False)  
@@ -100,8 +127,8 @@ text_box = tk.Text(ctrl_frame, width=32, height=28, font=("Helvetica", 8))
 btn_settings = tk.Button(ctrl_frame, text="Settings...", command=open_settings)
 btn_load = tk.Button(ctrl_frame, text="Load Video", command=select_file)
 btn_backwards = tk.Button(ctrl_frame, text="<<", width=5)
-btn_play = tk.Button(ctrl_frame, text=">", width=5, command=threading)
-btn_pause = tk.Button(ctrl_frame, text="||", width=5)
+btn_play = tk.Button(ctrl_frame, text=">", width=5, command=play_video)
+btn_pause = tk.Button(ctrl_frame, text="||", width=5, command=pause_video)
 btn_forward = tk.Button(ctrl_frame, text=">>", width=5)
 
 btn_settings.grid(row=0, column=1, pady=(0,3), sticky='we', columnspan=4)
