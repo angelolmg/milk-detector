@@ -7,10 +7,15 @@ from tkinter.messagebox import showinfo, showerror, showwarning
 
 class Detector:
     def __init__(self, video_path, settings=None):
+        
+        if video_path == "":
+            showerror(title='Detector initialization', message="Detector tried to initialize with no video available.")
+            return None
 
         if settings is None:
             showerror(title='Detector initialization', message="Detector tried to initialize with no arguments.")
             return None
+
         '''
         self.cfg_path = 'defaults/default.cfg'
         self.weights_path = 'defaults/default.weights'
@@ -26,6 +31,7 @@ class Detector:
         self.display_tracking_info=1
         self.display_fps=1
         '''
+        self.video_over = False
         self.apply_settings(settings)
 
         # Get structure with all products available
@@ -77,7 +83,10 @@ class Detector:
         try:
             self.cap = cv2.VideoCapture(video_path)
         except:
-            showerror(title='Video Error', message="Bad video path. Could not find in " + str(video_path))
+            if video_path == "":
+                showerror(title='Video Error', message="Bad video path. No video path provided, please load a video first.")
+            else:
+                showerror(title='Video Error', message="Bad video path. Could not find in " + str(video_path))
             return None
 
         #net = cv2.dnn.readNet("old/custom-yolov4-tiny-detector_best-v6.weights", "old/main-custom-yolov4-tiny-detector.cfg")
@@ -91,6 +100,7 @@ class Detector:
 
         ret, frame = self.cap.read() 
         if not ret:
+            self.video_over = True
             return None
 
         # Initialize screen proportion variables
@@ -272,7 +282,7 @@ class Detector:
 
     def apply_settings(self, settings):
 
-        print("Applying settings: " + str(settings))
+        print("detector.py - Applying settings: " + str(settings))
 
         self.cfg_path = settings[0]
         self.weights_path = settings[1]
@@ -291,6 +301,7 @@ class Detector:
 
     def get_products(self):
         return self.products
+
 
 #det = Detector()
 #det.getNextFrame()

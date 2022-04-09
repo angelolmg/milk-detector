@@ -182,31 +182,26 @@ class Settings:
         self.check = tk.Checkbutton(self.display_settings, 
                                     text='Debug detected objects',
                                     background=backdrop_color,
-                                    command=self.test,
                                     variable=self.checkv1)
         self.check.grid(row=0, column=0, pady=(0,5), sticky='w')
         self.check = tk.Checkbutton(self.display_settings, 
                                     text='Display name and score',
                                     background=backdrop_color,
-                                    command=self.test,
                                     variable=self.checkv2)
         self.check.grid(row=1, column=0, pady=(0,5), sticky='w')
         self.check = tk.Checkbutton(self.display_settings, 
                                     text='Display bounding boxes',
                                     background=backdrop_color,
-                                    command=self.test,
                                     variable=self.checkv3)
         self.check.grid(row=2, column=0, pady=(0,5), sticky='w')
         self.check = tk.Checkbutton(self.display_settings, 
                                     text='Display tracking info (radius and id)',
                                     background=backdrop_color,
-                                    command=self.test,
                                     variable=self.checkv4)
         self.check.grid(row=3, column=0, pady=(0,5), sticky='w')
         self.check = tk.Checkbutton(self.display_settings, 
                                     text='Display FPS',
                                     background=backdrop_color,
-                                    command=self.test,
                                     variable=self.checkv5)
         self.check.grid(row=4, column=0, pady=(0,5), sticky='w')
         # =================================================
@@ -214,7 +209,6 @@ class Settings:
         self.check = tk.Checkbutton(self.top, 
                                     text='Save settings as default',
                                     background=background_color,
-                                    command=self.test,
                                     variable=self.checkv6)
         self.check.grid(row=6, column=0, pady=(5,0), padx=5, sticky='w', columnspan=2)
 
@@ -227,11 +221,11 @@ class Settings:
         self.cancel_btn = tk.Button(self.top, text="Cancel", command=self.on_press_CANCEL)
         self.cancel_btn.grid(row=7, column=4, sticky='we', pady=(5,10), padx=(0,10))
 
-        if configs is None or len(configs) is not 13:
-            print('Configuration is bad. Setting fallback configutation.')
+        if configs is None or len(configs) != 13:
+            print('settings.py - Configuration is bad. Setting fallback configutation.')
             self.set_DEFAULTS()
         else: 
-            print('Configuration is good. Setting configuration.')
+            print('settings.py - Configuration is good. Setting configuration.')
             self.set_configs(configs)
 
         # don't return to main part untill you close
@@ -255,7 +249,7 @@ class Settings:
         if self.checkv6.get():
             f = open("defaults/configuration.txt", "w")
 
-            print('Rewriting defaults file.')
+            print('settings.py - Rewriting defaults file.')
             f.write(   "cfg_file_path="         + self.entry1.get() + "\n\
 weights_file_path="     + self.entry2.get() + "\n\
 names_file_path="       + self.entry3.get() + "\n\
@@ -278,7 +272,7 @@ display_fps="           + str(self.checkv5.get()) + "\n")
         self.top.destroy()
 
     def set_DEFAULTS(self):
-        print('Setting defaults -> ' + str(self.fallback))
+        print('settings.py - Setting defaults -> ' + str(self.fallback))
         self.set_configs(self.fallback)
 
     def set_configs(self, configs):
