@@ -51,13 +51,14 @@ def update():
         elif currentforward > 1:
             if not draw_video():
                 return end_video()
-
             '''    
             if len(feeds) == 0:
                 print('gui.py - No feeds available. Returning this thread.')
                 return
             '''
             continue
+
+        fill_shoppinglist()
 
 def threading():
     # Call work function
@@ -159,13 +160,14 @@ def forward_video(forward_frames):
     currentforward = forward_frames
 
 def fill_shoppinglist():
-    global product, text_box
+    global text_box
 
     # Get structure with all products available
     products = []
+    total_price = 0
     if det is not None:
         products = det.get_products()
-        print('gui.py - Filling shopping list.')
+        total_price = str(det.get_totalprice())
 
     text_box.delete(1.0, "end")
 
@@ -175,10 +177,15 @@ def fill_shoppinglist():
         text += f"{product[0]} - R${price[0] + ',' + price[1].ljust(2, '0')}\n"
 
     text += f"\nShopping List:\n\n"
+    for product in products:
+        if product[2] > 0:
+            text += f"{product[0]} - {product[2]}\n"
+    
+    text += f"\nTotal price: R${total_price}"
 
     text_box.insert("end",text)
-    
-    
+
+
 
 window = tk.Tk()
 video_path = ""

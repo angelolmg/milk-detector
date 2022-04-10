@@ -16,21 +16,6 @@ class Detector:
             showerror(title='Detector initialization', message="Detector tried to initialize with no arguments.")
             return None
 
-        '''
-        self.cfg_path = 'defaults/default.cfg'
-        self.weights_path = 'defaults/default.weights'
-        self.names_path = 'defaults/default.names'
-        self.products_path = 'defaults/default.csv'
-        self.confidence_threshold = 0.3
-        self.nms_threshold=0.5
-        self.checking_proportion=0.6
-        self.same_object_radius=40
-        self.debug_detected_objects=0
-        self.display_name_score=1
-        self.display_bounding_boxes=1
-        self.display_tracking_info=1
-        self.display_fps=1
-        '''
         self.video_over = False
         self.apply_settings(settings)
 
@@ -194,6 +179,12 @@ class Detector:
             cv2.putText(frame, fps_label, (0, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.8, self.black, 4)
             cv2.putText(frame, fps_label, (0, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.8, self.green, 2)
 
+        # Draw total price
+        pos = (0, self.screen_w - 10)
+        if (self.display_fps):
+            price_label = f"R${self.total_price}"
+            cv2.putText(frame, price_label, pos, cv2.FONT_HERSHEY_SIMPLEX, 1.8, self.black, 4)
+            cv2.putText(frame, price_label, pos, cv2.FONT_HERSHEY_SIMPLEX, 1.8, self.green, 2)
 
         frame = cv2.resize(frame, (870,500)) 
         frameRGB = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -309,6 +300,9 @@ class Detector:
 
     def get_products(self):
         return self.products
+    
+    def get_totalprice(self):
+        return self.total_price
 
 
 #det = Detector()
