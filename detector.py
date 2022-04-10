@@ -96,12 +96,20 @@ class Detector:
 
         self.tracker = EuclideanDistTracker(self.same_object_radius, False)
 
-    def getNextFrame(self):
+    def getNextFrame(self, forward_frames=1):
 
-        ret, frame = self.cap.read() 
+        ret, frame = self.cap.read()
+        went_forward = False
+
+        #print('detector.py - Going forward ' + str(forward_frames) + ' frames.')
+        for i in range(forward_frames - 1):
+            ret, frame = self.cap.read()
+            went_forward = True
+
         if not ret:
             self.video_over = True
-            return None
+            return None, False
+        
 
         # Initialize screen proportion variables
         # Initialize checking threshold  
@@ -190,7 +198,7 @@ class Detector:
         frame = cv2.resize(frame, (870,500)) 
         frameRGB = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
-        return frameRGB
+        return frameRGB, went_forward
 
     def play(self):
 

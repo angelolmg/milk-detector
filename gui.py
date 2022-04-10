@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog as fd
 from tkinter.messagebox import showinfo, showerror, showwarning
+from turtle import forward
 from PIL import ImageTk, Image
 from threading import *
 import time
@@ -25,23 +26,37 @@ def select_file():
     '''
     load_video(filename)
 
+def draw_video():
+    global currentforward
+    imgMatrix, went_forward = det.getNextFrame(forward_frames=currentforward)
+
+    if went_forward:
+        currentforward = 1
+
+    if isinstance(imgMatrix, type(None)):
+        return False
+
+    nextFrame = Image.fromarray(imgMatrix)
+    img = ImageTk.PhotoImage(nextFrame)
+    label.configure(image=img)
+    label.image = img
+
+    return True
+
 def update(): 
     while True:
         if video_playing:
-            imgMatrix = det.getNextFrame()
+            if not draw_video():
+                return end_video()
+        elif currentforward > 1:
+            if not draw_video():
+                return end_video()
 
-            if isinstance(imgMatrix, type(None)):
-                end_video()
-                return
-
-            nextFrame = Image.fromarray(imgMatrix)
-            img = ImageTk.PhotoImage(nextFrame)
-            label.configure(image=img)
-            label.image = img
-        else:
+            '''    
             if len(feeds) == 0:
                 print('gui.py - No feeds available. Returning this thread.')
                 return
+            '''
             continue
 
 def threading():
@@ -57,21 +72,16 @@ def open_settings():
     settings = Settings(configuration, fallback_config)
 
     if settings.result:
-        print('gui.py - New configurations received.')
+        print('gui.py - New configurations applied.')
         configuration = settings.result
     #else: showwarning(title='Configuration Warning', message="No new configuration applied.")
 
     if video_path != "":
-        print('gui.py - Loading video again with new configurations.')
+        print('gui.py - Video reloaded.')
         load_video(video_path)
 
     else:
         print("gui.py - Can't load video again because there's no video path.")
-
-def apply_settings(video_path="", new_config=None):
-    global det
-    det = Detector(video_path, new_config)
-
 
 def get_default_configuration():
         try:
@@ -143,6 +153,11 @@ def end_video():    # Pauses then clears the feed list
     feeds = []
     print('gui.py - Video ended.')
 
+def forward_video(forward_frames):
+    print('gui.py - Going forward ' + str(forward_frames) + ' frames.')
+    global currentforward
+    currentforward = forward_frames
+
 def fill_shoppinglist():
     global product, text_box
 
@@ -166,11 +181,12 @@ def fill_shoppinglist():
     
 
 window = tk.Tk()
-#video_path = "data2/videos/milk_cond7.mp4"
 video_path = ""
 configuration = get_default_configuration()
 fallback_config = configuration.copy()
-#det = Detector(video_path, configuration)
+
+currentforward = 1
+nforward = 20
 
 det = None
 video_feed = None
@@ -189,7 +205,7 @@ btn_load = tk.Button(ctrl_frame, text="Load Video", command=select_file)
 #btn_backwards = tk.Button(ctrl_frame, text="<<", width=5)
 btn_play = tk.Button(ctrl_frame, text=">", width=5, command=play_video)
 btn_pause = tk.Button(ctrl_frame, text="||", width=5, command=pause_video)
-btn_forward = tk.Button(ctrl_frame, text=">>", width=5)
+btn_forward = tk.Button(ctrl_frame, text=">>", width=5, command=lambda: forward_video(forward_frames=nforward))
 
 btn_settings.grid(row=0, column=1, pady=(0,3), sticky='we', columnspan=4)
 btn_load.grid(row=1, column=1, pady=(3,3), sticky='we', columnspan=4)
